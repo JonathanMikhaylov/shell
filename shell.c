@@ -1,54 +1,60 @@
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <shell.h>
+#include "shell.h"
 
 int main() {
-  printf("Please type command:");
+  char c[100];
 
-  int x=1;
+  int x = 1;
   while(x) {
-    char *in = prompt();
-    char *l = readline(in);
-    x = checkLine(l);  
+    printf("Please type command:");
+    fgets(c,99,stdin);
+    char *l = c;
+    x = runLine(l);  
   }
   return 0;
 }
 
-int checkLine(char *l) {
+int runLine(char *l) {
   int x = 1;
   char *n = l;
   char * lineArr[15];
   
   for(int i = 0; (lineArr[i] = strsep( &n, ";")); i++); 
-  for(int j = 0; line[j]; j++) {
-    x = x && runCmd( lineArr[j] );
-  }
+  for(int j = 0; lineArr[j]; j++) { x = x && runCmd( lineArr[j] );}
   return x;
 }
 
 int runCmd(char *cmd) {
   char *n = cmd;
-  char * c[100];
-  if(!strlen(cmd) return 1;
+  char c[100];
+  if(!strlen(cmd)) return 1;
   
-  c[strlen(c)-1] = 0; //terminating null in string
-    int n = 0;
-  while(holder){
-    command[n] = strsep(&holder," ");
-    n++;
+  int i = 0;
+  char *hold = c;
+  char *cmdArr[100];
+  while(hold) {
+    cmdArr[i] = strsep(&hold," ");
+    i++;
   }
-  command[n] = 0; //terminating null in array
+  cmdArr[i] = 0;
 
-  int s;
-  int f = fork();
-  if(f==0) {
-    execvp(command[0], command);
-  }
-  else{
-    wait(&s);
-  }
+  if ( !strcmp("exit",cmdArr[0])) return 0;
+  else if( !(strcmp("cd",cmdArr[0])) ) cdFunct(cmdArr[1]);
+  else {
+    int s;
+    int f = fork();
+    if(f==0) {
+      execvp(cmdArr[0], cmdArr);
+    }
+    else{
+      wait(&s);
+    }
   }
   return 0;
+}
+
+void cdFunct(char * t) {
+  int e;
+  if(t) e = chdir(t);
+  else e = chdir(" ");
+  if(e) printf("-shell: cd: %s: %s\n", t, strerror(errno));
 }
