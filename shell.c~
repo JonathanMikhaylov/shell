@@ -58,5 +58,5 @@ void cdFunct(char * t) {
   int e;
   if(t) e = chdir(t);
   else e = chdir(" ");
-  if(e) printf("cd-ERROR: %s: %s \n\n", t, strerror(errno));
+  if(e) printf("cd: %s: %s \n\n", t, strerror(errno));
 }
