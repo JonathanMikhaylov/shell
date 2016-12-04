@@ -46,12 +46,13 @@ int runCmd(char *cmd) {
     int f = fork();
     if(f==0) {
       execvp(cmdArr[0], cmdArr);
+      exit(0);
     }
     else{
       wait(&s);
     }
   }
-  return 0;
+  return 1;
 }
 
 void cdFunct(char * t) {
